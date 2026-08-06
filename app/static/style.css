@@ -1,8 +1,25 @@
 body{
     font-family:sans-serif;
+    background:#f8f9fa;
 }
 
 .app-container{
     max-width:1200px;
     margin:auto;
+    background:white;
+    padding:20px;
+}
+
+.search-section{
+    display:flex;
+    gap:10px;
+}
+
+button{
+    background:#3498db;
+    color:white;
+}
+
+#map{
+    height:400px;
 }
