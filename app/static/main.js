@@ -1,4 +1,6 @@
+
 let map;
+let markers = [];
 
 function DefaultMap(){
 
@@ -24,8 +26,34 @@ document.getElementById("search-btn").addEventListener("click", async ()=>{
 
     const data = await response.json();
 
+    if(data.results){
+        
+        updateUI(data.results, data.location);
+    
+    }
+
     console.log(data);
 });
+
+
+function updateUI(places, location){
+
+    map.setCenter(location);
+
+    places.forEach(place=>{
+
+        const marker =
+            new google.maps.Marker({
+                position:place.geometry.location,
+                map:map,
+                title:place.name
+            });
+
+        markers.push(marker);
+
+    });
+
+}
 
 
 
