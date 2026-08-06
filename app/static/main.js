@@ -36,23 +36,38 @@ document.getElementById("search-btn").addEventListener("click", async ()=>{
 });
 
 
-function updateUI(places, location){
+function updateUI(places, location) {
+    // Clear markers
+    markers.forEach(m => {
+        console.log("Current Marker:", m);
+        m.setMap(null)
+    });
+    markers = [];
 
+    // Reset list
+    const list = document.getElementById('place-list');
+    list.innerHTML = "";
+
+    // Set map center
     map.setCenter(location);
+    map.setZoom(14);
 
-    places.forEach(place=>{
-
-        const marker =
-            new google.maps.Marker({
-                position:place.geometry.location,
-                map:map,
-                title:place.name
-            });
+    places.forEach(place => {
+        // Add Marker
+        const marker = new google.maps.Marker({
+            position: place.geometry.location,
+            map: map,
+            title: place.name
+        });
 
         markers.push(marker);
 
+        // Add to List
+        const li = document.createElement('li');
+        li.className = "place-list";
+        li.innerHTML = `<strong>${place.name}</strong><br>${place.vicinity}<br>Rating: ${place.rating || 'N/A'}`;
+        list.appendChild(li);
     });
-
 }
 
 
