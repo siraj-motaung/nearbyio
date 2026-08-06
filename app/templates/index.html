@@ -1,36 +1,59 @@
 <!DOCTYPE html>
+
 <html>
-<head>
-    <title>NearbyIO — Discover Places Around You</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+    <head>
+        <meta charset="utf-8">
+        <title>NearbyIO — Discover Places Around You</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
 
-<body>
+    <body>
 
-    <div class="app-container">
-        <header>
-            <h1>NearbyIO</h1>
-            <p class="tagline">Interactive Location & POI Discovery Engine</p>
-        </header>
+        <div class="app-container">
 
-        <div class="search-section">
-            <input id="address-input" placeholder="Enter address">
-            <select id="place-type">
-                <option value="restaurant">Restaurant</option>
-            </select>
+            <header>
+                <h1>NearbyIO</h1>
+                <p class="tagline">Interactive Location & POI Discovery Engine</p>
+            </header>
 
-            <button id="search-btn">
-                Search Nearby
-            </button>
+            <div id="error-message"></div>
+
+            <div class="search-section">
+
+                <input
+                    type="text"
+                    id="address-input"
+                    placeholder="Enter an address..."
+                />
+
+                <select id="place-type">
+                    <option value="restaurant">Restaurant</option>
+                    <option value="cafe">Cafe</option>
+                    <option value="park">Park</option>
+                    <option value="atm">ATM</option>
+                </select>
+
+                <button id="search-btn">
+                    Search Nearby
+                </button>
+
+            </div>
+
+            <div id="map"></div>
+
+            <div class="result-container">
+                <h2>Nearby Places</h2>
+
+                <ul id="place-list"></ul>
+            </div>
+
         </div>
 
-        <div id="map"></div>
-
-        <ul id="place-list"></ul>
-
-    </div>
+    </body>
 
     <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}"></script>
     <script src="/static/main.js"></script>
-</body>
+
 </html>

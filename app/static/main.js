@@ -1,4 +1,3 @@
-
 let map;
 let markers = [];
 
@@ -11,6 +10,8 @@ function DefaultMap() {
         }
     });
 }
+
+const errorDiv = document.getElementById("error-message");
 
 document.getElementById("search-btn").addEventListener("click", async () => {
 
@@ -27,12 +28,26 @@ document.getElementById("search-btn").addEventListener("click", async () => {
 
         const data = await response.json();
 
+        if (!response.ok) {
+
+            errorDiv.innerText = data.message || "Location not found.";
+
+            errorDiv.style.display = "block";
+
+            return;
+        }
+
         if (data.results) {
             updateUI(data.results, data.location);
         }
 
     } catch (error) {
+
         console.error("API Error:", error);
+
+        errorDiv.innerText = "Connection error. Is the Flask server running?";
+
+        errorDiv.style.display = "block";
     }
 
 });
@@ -62,6 +77,7 @@ function updateUI(places, location) {
         markers.push(marker);
 
         const li = document.createElement("li");
+        
         li.className = "place-list";
 
         li.innerHTML = `
