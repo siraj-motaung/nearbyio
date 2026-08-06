@@ -13,6 +13,14 @@ function DefaultMap() {
 
 const errorDiv = document.getElementById("error-message");
 
+const addressInput = document.getElementById("address-input");
+
+addressInput.addEventListener("input", ()=>{
+    errorDiv.style.display = "none";
+    errorDiv.innerText = "";
+});
+
+
 document.getElementById("search-btn").addEventListener("click", async () => {
 
     const address = document.getElementById("address-input").value;
