@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NearbyIO — Discover Places Around You</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>NearbyIO</h1>
+            <p class="tagline">Interactive Location & POI Discovery Engine</p>
+        </header>
+
+        <div class="search-section">
+            <input id="address-input" placeholder="Enter address">
+            <select id="place-type">
+                <option value="restaurant">Restaurant</option>
+            </select>
+
+            <button id="search-btn">
+                Search Nearby
+            </button>
+        </div>
+
+        <div id="map"></div>
+
+        <ul id="place-list"></ul>
+
+    </div>
+
+<script src="/static/main.js"></script>
+</body>
+</html>
