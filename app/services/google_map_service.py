@@ -1,6 +1,5 @@
-from utils import errors
+from app.utils import errors
 
-import json
 import logging
 import requests
 from requests.adapters import HTTPAdapter
@@ -25,7 +24,7 @@ class GoogleMapService:
             total=3,
             backoff_factor=1,
             status_forcelist=[500, 502, 503, 504],
-            allowed_methods=frozenset({["GET"]})
+            allowed_methods=frozenset(["GET"])
         )
 
         adapter = HTTPAdapter(
@@ -34,7 +33,7 @@ class GoogleMapService:
             pool_maxsize=10 
         )
 
-        self.session.mount("https://", adapter)
+        self.sessions.mount("https://", adapter)
 
 
     def _get_json(self, url: str, params: dict[str, any]) -> dict:
@@ -133,7 +132,7 @@ class GoogleMapService:
 
         return {
             "latitude": location["lat"],
-            "logitude": location["lng"]
+            "longitude": location["lng"]
         }
 
 
