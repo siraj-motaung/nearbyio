@@ -2,7 +2,7 @@ import logging
 
 from flask import jsonify
 
-from utils.errors import AppError
+from app.utils.errors import AppError
 
 
 _LOGGER = logging.getLogger(__name__)

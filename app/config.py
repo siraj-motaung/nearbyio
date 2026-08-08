@@ -18,4 +18,4 @@ class Config:
                             )
 
         logger = logging.getLogger(__name__)
-        logger.info("logging initialized at %s level", cls.LOG_LEVEL)
+        logger.info("logging initialized at %s level.", cls.LOG_LEVEL)
