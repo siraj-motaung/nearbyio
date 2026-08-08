@@ -96,11 +96,11 @@ class GoogleMapService:
 
         if status != "OK":
             logger.error(
-                "Unexpected Google Geocoding status: %s",
+                "Google Geocoding API returned unexpected status: %s",
                 status,
             )
             raise errors.ExternalServiceError(
-                "Could not geocode the requested address.",
+                "We couldn't process the address right now. Please try again later.",
                 502,
             )
 
@@ -111,7 +111,8 @@ class GoogleMapService:
                 "Google returned OK with no results"
             )
             raise errors.ExternalServiceError(
-                "Location service returned an invalid response.",
+                "We're having trouble finding that location right now. "
+                "Please try again later.",
                 502,
             )
 
@@ -131,7 +132,8 @@ class GoogleMapService:
             )
 
         return {
-            "location": location
+            "latitude": location["lat"],
+            "logitude": location["lng"]
         }
 
 
@@ -141,7 +143,7 @@ class GoogleMapService:
 
         if not place_type or not place_type.strip():
             raise errors.ValidationError(
-                "Parameter 'place_type' cannot be empty.",
+                "Place type cannot be empty.",
                 400,
             )
 
