@@ -222,5 +222,9 @@ class GoogleMapService:
                 headers=headers,
             )
 
+        if not response:
+            logger.info("No places found for latitude=%s, longitude=%s, type=%s", latitude, longitude, place_type)
+            raise errors.NotFoundError("No places found for the specified location and type.", 404)
+
         return response
             
