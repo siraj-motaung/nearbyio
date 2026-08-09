@@ -36,6 +36,41 @@ class GoogleMapService:
         self.sessions.mount("https://", adapter)
 
 
+
+    def _post_json(self, url: str, payload: dict[str, any], headers: dict[str, any]):
+
+        try:
+            response = self.sessions.post(
+                url,
+                json=payload,
+                headers=headers,
+                timeout=(2, 3),
+                )
+
+            response.raise_for_status()
+
+        except requests.exceptions.Timeout as exc:
+            logger.error("Google Places request timed out. %s", exec)
+
+            raise errors.ExternalServiceTimeout(
+                "Location service timed out.",
+                504,
+            ) from exc
+
+        except requests.exceptions.RequestException as exc:
+            logger.error(
+                "Google Places request failed: %s",
+                exc,
+            )
+
+            raise errors.ExternalServiceError(
+                "Location service is unavailable.",
+                502,
+            ) from exc
+        
+        return response.json()
+
+
     def _get_json(self, url: str, params: dict[str, any]) -> dict:
 
         try:
@@ -53,7 +88,9 @@ class GoogleMapService:
         except requests.exceptions.RequestException as exc:
             logger.error("Google Maps request failed: %s", exc)
             raise errors.ExternalServiceError("Location service is unavailable.", 502) from exc
-        
+
+        return response.json()
+
 
     def geocode(self, address: str, ) -> dict:
 
@@ -85,8 +122,8 @@ class GoogleMapService:
             "OVER_DAILY_LIMIT",
         }:
             logger.error(
-                "Google Geocoding failure: status=%s",
-                status,
+                "Google Geocoding failure: status=%s, error message: %s",
+                status, data.get("error_message"),
             )
             raise errors.ExternalServiceError(
                 "Location service is currently unavailable.",
@@ -95,8 +132,8 @@ class GoogleMapService:
 
         if status != "OK":
             logger.error(
-                "Google Geocoding API returned unexpected status: %s",
-                status,
+                "Google Geocoding API returned unexpected status: %s, error message: %s",
+                status, data.get("error_message"),
             )
             raise errors.ExternalServiceError(
                 "We couldn't process the address right now. Please try again later.",
@@ -136,9 +173,7 @@ class GoogleMapService:
         }
 
 
-    def nearby_search(self, latitude: float, longitude: float, place_type: str, radius: int = 200) -> dict:
-
-        url = f"{self.BASE_URL}place/nearbysearch/json"
+    def nearby_search(self, latitude: float, longitude: float, place_type: str, radius: int = 200,) -> list[dict]:
 
         if not place_type or not place_type.strip():
             raise errors.ValidationError(
@@ -153,50 +188,39 @@ class GoogleMapService:
                 400,
             )
 
-        url = f"{self.BASE_URL}place/nearbysearch/json"
+        url = "https://places.googleapis.com/v1/places:searchNearby"
 
-        params = {
-            "location": f"{latitude},{longitude}",
-            "radius": radius,
-            "type": place_type.strip(),
-            "key": self.api_key,
+        payload = {
+            "includedTypes": [place_type.strip()],
+            "maxResultCount": 2,
+            "locationRestriction": {
+                "circle": {
+                    "center": {
+                        "latitude": latitude,
+                        "longitude": longitude,
+                    },
+                    "radius": radius,
+                }
+            },
         }
 
-        data = self._get_json(url, params)
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": self.api_key,
+            "X-Goog-FieldMask": (
+                "places.displayName,"
+                "places.formattedAddress,"
+                "places.rating,"
+                "places.userRatingCount"
+            ),
+        }
 
-        status = data.get("status")
-
-        if status == "ZERO_RESULTS":
-            return []
-
-        if status == "OK":
-            return data.get("results", [])
-
-        if status in {
-            "REQUEST_DENIED",
-            "OVER_QUERY_LIMIT",
-        }:
-            logger.error(
-                "Google Places failure: status=%s",
-                status,
-            )
-            raise errors.ExternalServiceError(
-                "Location service is currently unavailable.",
-                502,
+      
+        response = self._post_json(
+                url,
+                payload=payload,
+                headers=headers,
             )
 
-        if status == "INVALID_REQUEST":
-            raise errors.ValidationError(
-                "Invalid search parameters.",
-                400,
-            )
-
-        logger.error(
-            "Unexpected Google Places status: %s",
-            status,
-        )
-
-        raise errors.ExternalServiceError(
-            "Failed to perform nearby search.",
-            502,
-        )
+        return response
+            
