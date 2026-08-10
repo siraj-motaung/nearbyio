@@ -192,7 +192,7 @@ class GoogleMapService:
 
         payload = {
             "includedTypes": [place_type.strip()],
-            "maxResultCount": 2,
+            "maxResultCount": 20,
             "locationRestriction": {
                 "circle": {
                     "center": {
@@ -211,7 +211,8 @@ class GoogleMapService:
                 "places.displayName,"
                 "places.formattedAddress,"
                 "places.rating,"
-                "places.userRatingCount"
+                "places.userRatingCount,"
+                "places.location"
             ),
         }
 
