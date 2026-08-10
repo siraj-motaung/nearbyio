@@ -30,7 +30,7 @@ def create_app():
     app.register_blueprint(places_bp)
 
     # Register error handlers.
-    app.register_error_handler(AppError, handle_unexpected_error)
+    app.register_error_handler(AppError, handle_app_error)
     app.register_error_handler(Exception, handle_unexpected_error)
 
     return app
