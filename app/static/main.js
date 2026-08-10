@@ -34,15 +34,15 @@ document.getElementById('search-btn').addEventListener('click', async () => {
     try {
         const response = await fetch(`/api/nearby?address=${encodeURIComponent(address)}&type=${type}`);
         const data = await response.json();
-
+        console.log(`${JSON.stringify(data, null, 2)}`)
         if (!response.ok) {
-            errorDiv.innerText = data.message || "Location not found. Please try again.";
+            errorDiv.innerText = data.error_message || "Location not found. Please try again.";
             errorDiv.style.display = "block";
             return;
         }
 
-        if (data.results) {
-            updateUI(data.results, data.location);
+        if (data.places) {
+            updateUI(data.places, data.location);
         }
     } catch (error) {
         console.error("API Error:", error);
@@ -66,14 +66,16 @@ function updateUI(places, location) {
 
     // Set map center
     map.setCenter(location);
-    map.setZoom(14);
+    map.setZoom(10);
 
     places.forEach(place => {
         // Add Marker
         const marker = new google.maps.Marker({
-            position: place.geometry.location,
+            position: {lat: place.location.latitude,
+                        lng: place.location.longitude
+                    },
             map: map,
-            title: place.name
+            title: place.displayName?.text
         });
 
         markers.push(marker);
@@ -81,7 +83,7 @@ function updateUI(places, location) {
         // Add to List
         const li = document.createElement('li');
         li.className = "place-list";
-        li.innerHTML = `<strong>${place.name}</strong><br>${place.vicinity}<br>Rating: ${place.rating || 'N/A'}`;
+        li.innerHTML = `<strong>${place.displayName?.text}</strong><br>${place.formattedAddress}<br>Rating: ${place.rating || 'N/A'}`;
         list.appendChild(li);
     });
 }
